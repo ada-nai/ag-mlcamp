@@ -3,3 +3,4 @@
 /midterm-project/subs/*
 /midterm-project/submission.csv
 /hic_prediction/*
+*/__pycache__/*
