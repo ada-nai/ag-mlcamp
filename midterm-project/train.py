@@ -22,16 +22,12 @@ warnings.filterwarnings("ignore", category=FutureWarning)
 
 
 def std_col_names(df):
+    """
+    Convert column names to lower case for the sake of convenience
+    """
     df.columns = df.columns.str.lower().str.strip().str.replace(' ', '_')
     return df
 
-
-# Transformations done:
-#
-# Split item_id -> retrieve_item_cats
-# Ordinally encode -> pd.map
-# Outlet age -> 2021 - x['outlet_year']
-# One hot encode/DictVectorize columns -> use cols
 
 
 def retrieve_item_cats(df, col):
@@ -47,22 +43,27 @@ def retrieve_item_cats(df, col):
     return item_cats
 
 def scale_num_cols(df, scale_cols):
+    """
+    Use min-max normalization
+    """
     for col in scale_cols:
         df[col+'_scale'] = (df[col] - min(df[col])) / (max(df[col]) - min(df[col]))
     return df
 
 def process_data(df, cols):
     """
-
+    Transformations done:
+        Split item_id -> retrieve_item_cats
+        Ordinally encode -> pd.map
+        Outlet age -> 2021 - x['outlet_year']
+        One hot encode/DictVectorize columns
     """
     outlet_size_map = {'Small': 1, 'Medium': 2, 'High': 3}
     outlet_location_map = {'Tier 1': 3,'Tier 2': 2, 'Tier 3': 1}
 
+    # columns to be scaled
     scale_cols = ['item_w', 'item_mrp', 'outlet_age']
 
-
-
-    # df = pd.DataFrame.from_dict(df).reset_index(drop= True)
     df_ids =  pd.DataFrame(retrieve_item_cats(df, 'item_id')).reset_index(drop= True)
     df_id_split = pd.concat([df, df_ids], axis= 1)
 
@@ -75,6 +76,11 @@ def process_data(df, cols):
     return df_id_split[cols]
 
 def main():
+    """
+    Driver utility for training model
+    """
+    # feature list after all processing is performed
+    # the model will be trained on these feature columns
     scaled_cols = ['item_cat_0',\
        'item_cat_1', 'item_cat_2', 'item_cat_3',  'item_w_scale', 'item_type', 'item_mrp_scale', 'outlet_id',\
        'out_size', 'out_type','outlet_age_scale']
@@ -89,18 +95,21 @@ def main():
     train_dict = train.to_dict(orient= 'records')
     logging.info('Data processed into dictionary')
 
+    # instantiate DictVectorizer
     dv = DictVectorizer(sparse= False)
     train_dv = dv.fit_transform(train_dict)
     logging.info('Data transformed using DictVectorizer')
 
-
+    # instantiate model
     rf_tuned = RandomForestRegressor(ccp_alpha=0.05, max_depth=15, max_features=5,
                       max_samples=0.5, n_estimators=200)
     logging.info('Training Model')
 
+    # fit model to transformed train data
     rf_tuned.fit(train_dv, df['sales'])
     logging.info('Model trained!')
 
+    # export data objects required for making predictions
     model_file = 'model.bin'
     dv_file = 'dv.bin'
 
@@ -111,6 +120,7 @@ def main():
         pickle.dump(dv, outfile)
 
     logging.info(f'Objects exported!: {model_file}, {dv_file}')
+    print('Training completed. Check logs at ./logs/train.log')
 
 
 if __name__ == "__main__":

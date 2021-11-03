@@ -1,3 +1,4 @@
+# import packages
 import pickle
 from flask import Flask
 from flask import request
@@ -5,6 +6,7 @@ from flask import jsonify
 
 import pandas as pd
 
+# load data objects required for making predictions
 model_file = 'model.bin'
 dict_file = 'dv.bin'
 test_samples = 'test_samples.bin'
@@ -15,14 +17,14 @@ with open(model_file, 'rb') as infile:
 with open(dict_file, 'rb') as infile:
     dv = pickle.load(infile)
 
-# with open(test_samples, 'rb') as infile:
-#     samples = pickle.load(infile)
 
 scaled_cols = ['item_cat_0',\
    'item_cat_1', 'item_cat_2', 'item_cat_3',  'item_w_scale', 'item_type', 'item_mrp_scale', 'outlet_id',\
    'out_size', 'out_type','outlet_age_scale']
 
+# create app instance
 app = Flask('store_sales')
+
 
 def retrieve_item_cats(df, col):
     """
@@ -37,13 +39,20 @@ def retrieve_item_cats(df, col):
     return item_cats
 
 def scale_num_cols(df, scale_cols):
+    """
+    Convert column names to lower case for the sake of convenience
+    """
     for col in scale_cols:
         df[col+'_scale'] = (df[col] - min(df[col])) / (max(df[col]) - min(df[col]))
     return df
 
 def process_data(df, cols):
     """
-
+    Transformations done:
+        Split item_id -> retrieve_item_cats
+        Ordinally encode -> pd.map
+        Outlet age -> 2021 - x['outlet_year']
+        One hot encode/DictVectorize columns
     """
     outlet_size_map = {'Small': 1, 'Medium': 2, 'High': 3}
     outlet_location_map = {'Tier 1': 3,'Tier 2': 2, 'Tier 3': 1}
@@ -67,6 +76,13 @@ def process_data(df, cols):
 
 @app.route('/predict', methods= ['POST'])
 def predict():
+    """
+    Fetch request json
+    Transform Data
+    Make predictions
+    Return predictions as json
+    """
+    # fetch requests made to endpoint
     item_details = request.get_json()
 
 
@@ -76,6 +92,7 @@ def predict():
 
     X = dv.transform(items_dict)
 
+    # make predictions on samples
     y_pred = model.predict(X)
 
     y_pred = [round(val, 2) for val in y_pred.tolist()]
