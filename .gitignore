@@ -5,3 +5,5 @@
 /hic_prediction/*
 */__pycache__/*
 /midterm-project/logs/*
+/peer_review/*
+/midterm-project/anon-sub.ipynb
