@@ -1,0 +1,35 @@
+INFO:root:Dataset loaded
+INFO:root:Sample: 
+INFO:root:Index(['item_cat_0', 'item_cat_1', 'item_cat_2', 'item_cat_3', 'item_w_scale',
+       'item_type', 'item_mrp_scale', 'outlet_id', 'out_size', 'out_type',
+       'outlet_age_scale'],
+      dtype='object')
+INFO:root:Data processed into dictionary
+INFO:root:Data transformed using DictVectorizer
+INFO:root:Training Model
+INFO:root:Model trained!
+INFO:root:Objects exported!: train_model.bin, train_dv.bin
+INFO:root:Dataset loaded
+INFO:root:Dataset loaded
+INFO:root:Dataset loaded
+INFO:root:Sample: 
+INFO:root:Index(['item_cat_0', 'item_cat_1', 'item_cat_2', 'item_cat_3', 'item_w_scale',
+       'item_type', 'item_mrp_scale', 'outlet_id', 'out_size', 'out_type',
+       'outlet_age_scale'],
+      dtype='object')
+INFO:root:Data processed into dictionary
+INFO:root:Data transformed using DictVectorizer
+INFO:root:Training Model
+INFO:root:Model trained!
+INFO:root:Objects exported!: model.bin, dv.bin
+INFO:root:Dataset loaded
+INFO:root:Sample: 
+INFO:root:Index(['item_cat_0', 'item_cat_1', 'item_cat_2', 'item_cat_3', 'item_w_scale',
+       'item_type', 'item_mrp_scale', 'outlet_id', 'out_size', 'out_type',
+       'outlet_age_scale'],
+      dtype='object')
+INFO:root:Data processed into dictionary
+INFO:root:Data transformed using DictVectorizer
+INFO:root:Training Model
+INFO:root:Model trained!
+INFO:root:Objects exported!: model.bin, dv.bin
