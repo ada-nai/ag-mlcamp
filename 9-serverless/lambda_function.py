@@ -10,7 +10,8 @@ from PIL import Image
 
 import tflite_runtime.interpreter as tflite
 
-interpreter = tflite.Interpreter(model_path='dog_cat.tflite')
+# interpreter = tflite.Interpreter(model_path='dog_cat.tflite')
+interpreter = tflite.Interpreter(model_path='cats-dogs-v2.tflite')
 interpreter.allocate_tensors()
 
 input_index = interpreter.get_input_details()[0]['index']
